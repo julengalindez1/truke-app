@@ -1,7 +1,7 @@
 # TRUKE-APP
 ### Overview
 Welcome to Truke! This is our final project for the Higher National Diploma in Software Engineering, completed over the course of three months by a dedicated team of three students. 
-The project showcases our collective efforts to build a web application that connects farmers and consumers, allowing users to manage and purchase agricultural products.
+The project showcases our collective efforts to build a web application that connects farmers and consumers, allowing users to manage agricultural products and connect.
 
 ### Tech Stack
 Next.js, Tailwind, Laravel, Docker and MariaDB.
