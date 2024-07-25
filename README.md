@@ -4,7 +4,9 @@ Welcome to Truke! This is our final project for the Higher National Diploma in S
 The project showcases our collective efforts to build a web application that connects farmers and consumers, allowing users to manage and purchase agricultural products.
 
 ### Tech Stack
-Tech stack: Next.js, Tailwind, Laravel, Docker and MariaDB.
+Next.js, Tailwind, Laravel, Docker and MariaDB.
+### Other Tools
+Miro and Figma.
 
 ### User Interface Design
 Initial sketch of main windows for the app:
