@@ -1,0 +1,71 @@
+version: "3.7"
+
+services:
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.4       # Existe versión 11.1, pero usamos está por coincidir con DDEV
+    ports:
+      - 3306:3306
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      ALLOW_EMPTY_PASSWORD: "yes"
+      # MARIADB_ROOT_PASSWORD:
+      MARIADB_USER: $DB_USERNAME     # sirve para crear un usuario nuevo en la BD
+      MARIADB_PASSWORD: $DB_PASSWORD # password del usuario nuevo en la BD
+      MARIADB_DATABASE: $DB_DATABASE
+    networks:
+      - app-network
+    volumes:
+      - dbdata:/bitnami/mariadb/data/
+      # - ./db_data:/bitnami/mariadb/data/    # esta carpeta necesita tener permisos de escritura por terceros
+
+  truke:
+    image: docker.io/bitnami/laravel:10
+    links:
+      - mariadb:db
+    ports:
+      - 8000:8000
+      # Este servidor no tiene https ni certificado, aún así redireccionamos.
+      # - 443:8000
+    environment:
+      DB_HOST: $DB_HOST
+      DB_PORT: $DB_PORT
+      DB_USERNAME: $DB_USERNAME
+      DB_PASSWORD: $DB_PASSWORD
+      DB_DATABASE: $DB_DATABASE
+    # Como no compartimos la carpeta vendor/ ni storage/, es necesario que composer las genere.
+    # El comando run.sh es el que ejecuta por defecto docker.io/bitnami/laravel:10
+    command: bash -c "
+      composer install &&      
+      /opt/bitnami/scripts/laravel/run.sh" # &&      
+      # php artisan migrate:reset && 
+      # php artisan migrate && 
+      # php artisan db:seed --class=RunSQLScriptSeeder"
+    networks:
+      - app-network
+    volumes:
+      - ./:/app
+    depends_on:
+      - mariadb
+
+  phpmyadmin:
+    depends_on:
+      - mariadb
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mariadb:db
+    ports:
+      - 8080:80
+    # environment:                              # Variables para identificarse con un servidor remoto (fuera de una red local).
+      # MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      # MYSQL_USER: $DB_USERNAME
+      # MYSQL_PASSWORD: $DB_PASSWORD
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
+    # driver: bridge
+
+volumes:
+  dbdata:         # Aquí se guardan los datos de la BD
